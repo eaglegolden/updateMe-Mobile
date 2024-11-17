@@ -2,7 +2,6 @@ import * as React from 'react';
 import {Index, useIndex} from '@/states/fetched';
 import {useSettings} from '@/states/persistent/settings';
 import {useTranslations} from '@/states/persistent/translations';
-import {useDialogs} from '@/states/runtime/dialogs';
 import MultiPagesDialog, {PageButton} from '@/components/MultiPagesDialog';
 import ProvidersPriorityList from './components/ProvidersPriorityList';
 import ProvidersSelectionList from './components/ProvidersSelectionList';
@@ -54,7 +53,6 @@ const useProvidersOrderDialog = () => {
     state.setSetting,
   ]);
   const translations = useTranslations(state => state.translations);
-  const activeDialog = useDialogs(state => state.activeDialog);
   const [activePage, setActivePage] =
     React.useState<ProvidersPriorityPages>('priority');
   const [orderedProviders, setOrderedProviders] = React.useState<string[]>([]);
@@ -88,15 +86,12 @@ const useProvidersOrderDialog = () => {
   );
 
   React.useEffect(() => {
-    if (activeDialog !== 'providersOrder') return;
-
     setActivePage('priority');
     setOrderedProviders(providersOrder);
-  }, [providersOrder, activeDialog]);
+  }, [providersOrder]);
 
   return {
     labels,
-    activeDialog,
     onSave,
     activePage,
     setActivePage,
@@ -115,7 +110,6 @@ const useProvidersOrderDialog = () => {
 const ProvidersOrderDialog = () => {
   const {
     labels,
-    activeDialog,
     onSave,
     activePage,
     setActivePage,
@@ -125,10 +119,6 @@ const ProvidersOrderDialog = () => {
     addProviderToOrder,
     removeProviderFromOrder,
   } = useProvidersOrderDialog();
-
-  if (activeDialog !== 'providersOrder') {
-    return null;
-  }
 
   return (
     <MultiPagesDialog
